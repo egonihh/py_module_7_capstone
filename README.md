@@ -8,18 +8,18 @@ A screen time app used to track data usage accross all your devices.
 - Flask
 - SQLAlchemy
 
-##Setup:
+## Setup:
 
-1. Create a virtual enviroment: (optional)
+## 1. Create a virtual enviroment: (optional)
 ```bash
 python -m venv venv
 source venv/bin/activate
 ```
-2. Install dependecies:
+## 2. Install dependecies:
 pip install flask sqlalchemy
 
-3. Initialize sample data:
+## 3. Initialize sample data:
 python sample_data.py
 
-4. Run app:
+## 4. Run app:
 python app.py
