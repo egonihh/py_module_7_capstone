@@ -1,7 +1,12 @@
-# Screentime (Version 1.0)
+# ScreenTime (Capstone Project)
 
-## Overview: 
-A screen time app used to track data usage accross all your devices. 
+## Overview
+ScreenTime tracks usage and pickups on multiple devices. Each device has its own dashboard with app-level breakdowns.
+
+## Features
+- Tracks **total usage time** and **pickups** per device
+- Separated dashboards for **Phone** and **Laptop**
+- Interactive **pie charts** for app pickups
 
 ## Requirements:
 - Python 3.10 or later
