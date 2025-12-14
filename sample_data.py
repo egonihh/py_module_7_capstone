@@ -1,27 +1,32 @@
 from models import init_db, Session, Device, UsageEntry
-import random, datetime
+import random
+import datetime
 
 init_db()
 s = Session()
 
-device_names = ["Phone", "Laptop", "Tablet"]
-apps = ["Browser","Chat","Video","Game","Social"]
+# Clear old data
+s.query(UsageEntry).delete()
+s.query(Device).delete()
 
-for name in device_names:
-    d = s.query(Device).filter_by(name=name).first()
-    if not d:
-        d = Device(name=name)
-        s.add(d)
-        s.commit()
-    for _ in range(random.randint(5,15)):
-        ue = UsageEntry(
+# Devices
+devices = ['Phone', 'Laptop']
+for name in devices:
+    d = Device(name=name)
+    s.add(d)
+    s.commit()
+
+    # Apps
+    apps = ['Social Media', 'Gaming', 'Video'] if name=='Phone' else ['Study','Browsing']
+    for app in apps:
+        u = UsageEntry(
             device_id=d.id,
-            app_name=random.choice(apps),
-            seconds=random.randint(60, 7200),
-            timestamp=datetime.datetime.utcnow(),
-            background=random.choice([True, False])
+            app_name=app,
+            seconds=random.randint(1800, 7200),
+            pickups=random.randint(5, 30),
+            timestamp=datetime.datetime.utcnow()
         )
-        s.add(ue)
+        s.add(u)
+
 s.commit()
-s.close()
 print("Sample data created")

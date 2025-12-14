@@ -1,24 +1,5 @@
-# Python
+venv/
 __pycache__/
 *.pyc
-*.pyo
-*.pyd
-*.db
-*.sqlite
-*.sqlite3
-
-# Virtual environment
-venv/
-ENV/
-env/
-
-# IDE / Editor
-.vscode/
-.vscodium/
-.idea/
-
-# OS files
-.DS_Store
-Thumbs.db
-git add .
-git commit -m "Add project files and .gitignore"
+db.sqlite
+.env

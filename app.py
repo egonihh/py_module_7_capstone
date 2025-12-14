@@ -1,38 +1,29 @@
-from flask import Flask, jsonify, send_from_directory
-from models import init_db, Session, Device, UsageEntry
-from recommendations import generate_recommendations
+from flask import Flask, render_template, jsonify
+from models import Session, Device, UsageEntry
 
-app = Flask(__name__, static_folder='static')
-init_db()
+app = Flask(__name__)
 
-@app.route('/')
+@app.route("/")
 def index():
-    return send_from_directory('static', 'index.html')
+    return render_template("index.html")
 
-@app.route('/api/summary')
-def summary():
+@app.route("/data")
+def data():
     s = Session()
     devices = s.query(Device).all()
-    out = []
+    output = {}
     for d in devices:
-        total = sum(u.seconds for u in d.usage)
-        by_app = {}
-        for u in d.usage:
-            by_app[u.app_name] = by_app.get(u.app_name,0)+u.seconds
-        out.append({'device': d.name, 'total_seconds': total, 'by_app': by_app})
-    s.close()
-    return jsonify(out)
+        total_sec = sum(u.seconds for u in d.usages)
+        total_pickups = sum(u.pickups for u in d.usages)
+        apps = {}
+        for u in d.usages:
+            apps[u.app_name] = {"time": u.seconds, "pickups": u.pickups}
+        output[d.name] = {
+            "total_seconds": total_sec,
+            "pickups": total_pickups,
+            "apps": apps
+        }
+    return jsonify(output)
 
-@app.route('/api/recommendations')
-def recs():
-    s = Session()
-    devices = s.query(Device).all()
-    data = []
-    for d in devices:
-        entries = [{'app': u.app_name, 'seconds': u.seconds, 'background': u.background} for u in d.usage]
-        data.append({'device': d.name, 'entries': entries})
-    s.close()
-    return jsonify(generate_recommendations(data))
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)

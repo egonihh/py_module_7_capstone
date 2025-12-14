@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScreenTime+</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body { background: #1e1e1e; color: #fff; font-family: -apple-system, Helvetica, Arial; margin:0; padding:20px; }
+h1 { text-align:center; }
+.device-card { background: #2c2c2c; border-radius: 12px; padding:20px; margin:20px auto; max-width:500px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);}
+.app-bar { display:flex; justify-content: space-between; margin:5px 0;}
+.bar { height:10px; border-radius:5px; background:#555; flex:1; margin-left:10px; position:relative;}
+.bar-fill { background:#4aa3ff; height:100%; border-radius:5px;}
+canvas { margin-top:15px;}
+</style>
+</head>
+<body>
+<h1>ScreenTime+</h1>
+<div id="dashboard"></div>
+<script>
+function secondsToHMS(s){
+    let h = Math.floor(s/3600); let m = Math.floor((s%3600)/60);
+    return `${h}h ${m}m`;
+}
+
+fetch("/data")
+.then(res => res.json())
+.then(data => {
+    const dash = document.getElementById("dashboard");
+    Object.keys(data).forEach(dev => {
+        const card = document.createElement("div");
+        card.className = "device-card";
+        let html = `<h2>${dev}</h2>
+                    <p>Total: ${secondsToHMS(data[dev].total_seconds)} | Pickups: ${data[dev].pickups}</p>`;
+        Object.keys(data[dev].apps).forEach(app => {
+            const appData = data[dev].apps[app];
+            const pct = appData.time/data[dev].total_seconds*100;
+            html += `<div class="app-bar"><span>${app}</span><div class="bar"><div class="bar-fill" style="width:${pct}%"></div></div><span>${secondsToHMS(appData.time)}</span></div>`;
+        });
+        html += `<canvas id="chart-${dev}"></canvas>`;
+        card.innerHTML = html;
+        dash.appendChild(card);
+
+        // Chart pickups
+        const ctx = document.getElementById(`chart-${dev}`).getContext('2d');
+        new Chart(ctx, {
+            type:'pie',
+            data:{
+                labels:Object.keys(data[dev].apps),
+                datasets:[{data:Object.keys(data[dev].apps).map(a=>data[dev].apps[a].pickups), backgroundColor:['#4aa3ff','#ff6b6b','#feca57','#1dd1a1']}]
+            },
+            options:{plugins:{legend:{labels:{color:'#fff'}}}}
+        });
+    });
+});
+</script>
+</body>
+</html>

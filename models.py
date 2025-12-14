@@ -1,6 +1,5 @@
-from sqlalchemy import create_engine, Column, Integer, String, Boolean, DateTime, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 import datetime
 
 Base = declarative_base()
@@ -11,17 +10,17 @@ class Device(Base):
     __tablename__ = 'devices'
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True)
-    usage = relationship("UsageEntry", back_populates="device")
+    usages = relationship("UsageEntry", back_populates="device")
 
 class UsageEntry(Base):
-    __tablename__ = 'usage_entries'
+    __tablename__ = 'usages'
     id = Column(Integer, primary_key=True)
     device_id = Column(Integer, ForeignKey('devices.id'))
     app_name = Column(String)
     seconds = Column(Integer)
+    pickups = Column(Integer)
     timestamp = Column(DateTime, default=datetime.datetime.utcnow)
-    background = Column(Boolean, default=False)
-    device = relationship("Device", back_populates="usage")
+    device = relationship("Device", back_populates="usages")
 
 def init_db():
     Base.metadata.create_all(engine)
