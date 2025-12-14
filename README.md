@@ -16,10 +16,14 @@ python -m venv venv
 source venv/bin/activate
 ```
 ## 2. Install dependecies:
+```bash
 pip install flask sqlalchemy
-
+```
 ## 3. Initialize sample data:
+```bash 
 python sample_data.py
-
+```
 ## 4. Run app:
+```bash
 python app.py
+```
